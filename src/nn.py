@@ -1,7 +1,11 @@
+import random
 from typing import Callable
 
 import torch
+from matplotlib.pyplot import subplots
 from torch import nn
+from torchvision.datasets import MNIST
+from torchvision.transforms import ToTensor
 
 from activation import softmax
 
@@ -29,10 +33,10 @@ class FeedForwardNetwork(nn.Module):
     :param *args: Optional parameters for the activation functions.
     """
 
-    weights: nn.ParameterList[torch.Tensor]
-    biases: nn.ParameterList[torch.Tensor]
+    weights: nn.ParameterList
+    biases: nn.ParameterList
     activations: list[Callable[[torch.Tensor, ...], torch.Tensor]]
-    activation_parameters: nn.ParameterList[nn.Parameter]
+    activation_parameters: nn.ParameterList
 
     def __init__(
         self,
@@ -40,7 +44,7 @@ class FeedForwardNetwork(nn.Module):
         hidden_sizes: list[int],
         activations: list[Callable[[torch.Tensor, ...], torch.Tensor]],
         output_size: int,
-        *args
+        *args,
     ):
         """Initializes the FeedForwardNetwork with the provided parameters."""
         super(FeedForwardNetwork, self).__init__()
@@ -100,3 +104,36 @@ class FeedForwardNetwork(nn.Module):
         ):
             layer_features = activation(layer_features @ weight + bias, param.item())
         return softmax(layer_features, dim=1)
+
+    def __str__(self):
+        """
+        Returns a string representation of the network.
+        """
+        return "\n".join([f"{name}:\t{param}" for name, param in self.named_parameters()])
+
+
+def main():
+    """
+    Downloads the MNIST dataset and visualizes a random sample of images.
+
+    This function performs the following tasks:
+    1. Downloads the MNIST dataset and applies a transformation to convert images into tensors.
+    2. Randomly selects `n_examples` images from the dataset.
+    3. Plots the selected images with their respective class labels.
+
+    :note: The images are displayed using matplotlib and have a resolution of 28x28 pixels.
+    """
+    dataset = MNIST(root="data/", download=True, transform=ToTensor())
+    n_examples = 3
+    fig, axes = subplots(nrows=n_examples, figsize=(2, n_examples * 3))
+    for i in range(n_examples):
+        idx = random.randint(0, len(dataset))
+        image, label = dataset[idx]
+        view = image.view(28, 28).numpy()
+        axes[i].set_title(f"Class: {label}")
+        axes[i].imshow(view)
+    fig.show()
+
+
+if __name__ == "__main__":
+    main()
