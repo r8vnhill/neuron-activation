@@ -1,82 +1,86 @@
 # PyTorch Playground
 
-Welcome to the PyTorch Playground, a repository that offers implementations of common
-neural network components using PyTorch.
-Whether you are a beginner looking to explore the internals of various activations or an
-experienced practitioner looking to play around with a custom feed-forward network, this
-repository has you covered.
+Dive into the PyTorch Playground - a toolkit of neural network components built with 
+PyTorch.
+Ideal for beginners keen on exploring activations or for pros aiming to tweak a custom 
+feed-forward network.
 
 ## Table of Contents
 
 1. [Activations](#activations)
-2. [FeedForward Network](#feedforward-network)
-3. [MNIST Model](#mnist-visualization)
-4. [Installation and Usage](#installation-and-usage)
-5. [Contributions](#contributions)
+2. [Devices](#devices)
+3. [Neural Network](#neural-network)
+    1. [FeedForward Network](#feedforward-network)
+    2. [Evaluation](#evaluation)
+4. [MNIST Model Demo](#mnist-model-demo)
+5. [Setup & Usage](#setup--usage)
+6. [Contribute](#contribute)
 
 ## Activations
 
-Located in the file named `activations`, this module offers various activation functions 
-commonly used in neural networks.
-These functions include:
+Find a collection of commonly-used activation functions in the `activations` file:
 
 - **Sigmoid**: `sigmoid(x)`
-- **Hyperbolic Tangent (Tanh)**: `tanh(x)`
-- **Rectified Linear Unit (ReLU)**: `relu(x)`
+- **Tanh**: `tanh(x)`
+- **ReLU**: `relu(x)`
 - **Swish**: `swish(x, beta)`
-- **Continuously Differentiable Exponential Linear Units (CELU)**: `celu(x, alpha)`
+- **CELU**: `celu(x, alpha)`
 - **Softmax**: `softmax(tensor, dim, stable)`
 
-Each function is well documented, providing insights into its mathematical formulation and 
-its PyTorch implementation.
+Each is well-documented with its formula and PyTorch code.
 
-## FeedForward Network
+## Devices
 
-The file named `nn` contains the `FeedForwardNetwork` class, a simple and customizable 
-feed-forward neural network.
-It allows for:
+The `devices` file introduces a `Device` enum that covers available devices (CPU and CUDA)
+for PyTorch.
 
-- Custom layer sizes.
-- Custom activation functions.
+## Neural Network
+
+Within the `network` package:
+
+- `NeuralNetwork` is an abstract base class for all networks, offering a unified interface.
+  
+### FeedForward Network
+
+Defined in `feed_forward_network`, the `FeedForwardNetwork` class offers:
+
+- Customizable layers and activations.
 - Parameterized activations.
+- Ability to load weights, determine input layer size, and provide network details.
 
-The `FeedForwardNetwork` is versatile, and you can load custom weights, retrieve the size 
-of the input layer, and even get a string representation of the entire network.
+### Evaluation
 
-## MNIST Model
+`evaluation` offers `evaluate_network(NeuralNetwork, VisionDataset, int, Device)`, 
+assessing a neural network's accuracy on a dataset.
 
-Also located in the `nn` file is a utility function `main()`.
-When run, this function:
+## MNIST Model Demo
 
-- Downloads the MNIST dataset.
-- Transforms the images into tensors.
-- Randomly selects two images from the dataset.
-- Creates a `FeedForwardNetwork` with 784 input neurons, two 16-neuron hidden layers, and
-  10 output neurons.
-- Loads the weights of a pre-trained model.
-- Feeds the two images through the network.
-- Displays the images and the network's predictions.
+`feed_forward_mnist` demonstrates the `FeedForwardNetwork`.
+This function:
 
-### Example Output
+- Downloads MNIST.
+- Transforms images.
+- Picks two random images.
+- Constructs a `FeedForwardNetwork`.
+- Loads pre-trained model weights.
+- Showcases the images, predictions, and overall accuracy.
+
+### Sample
 
 ![MNIST Model Output](results/mnist.png)
 
-## Installation and Usage
+## Setup & Usage
 
-To use this repository:
-
-1. Clone the repo:
+1. Clone:
     ```
     git clone https://github.com/r8vnhill/pytorch-playground.git
     ```
-2. Install the necessary libraries:
+2. Install:
     ```
     pip install -r requirements.txt
     ```
-3. Run the desired modules or functions!
+3. Execute your desired modules!
 
+## Contribute
 
-## Contributions
-
-Feel free to fork this repository, submit pull requests, or create issues if you have 
-suggestions or improvements!
+Fork, PR, or suggest improvements via issues!
