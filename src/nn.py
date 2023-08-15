@@ -1,13 +1,16 @@
 import random
-from typing import Callable
+from pathlib import Path
+from typing import Callable, Optional
 
 import torch
+from matplotlib import pyplot
 from matplotlib.pyplot import subplots
+from numpy import loadtxt
 from torch import nn
 from torchvision.datasets import MNIST
 from torchvision.transforms import ToTensor
 
-from activation import softmax
+from activation import softmax, relu
 
 
 class FeedForwardNetwork(nn.Module):
@@ -36,7 +39,7 @@ class FeedForwardNetwork(nn.Module):
     weights: nn.ParameterList
     biases: nn.ParameterList
     activations: list[Callable[[torch.Tensor, ...], torch.Tensor]]
-    activation_parameters: nn.ParameterList
+    activation_parameters: Optional[nn.ParameterList]
 
     def __init__(
         self,
@@ -61,6 +64,8 @@ class FeedForwardNetwork(nn.Module):
             self.activation_parameters = nn.ParameterList(
                 [nn.Parameter(param) for param in args]
             )
+        else:
+            self.activation_parameters = None
 
     @property
     def input_size(self) -> int:
@@ -91,19 +96,28 @@ class FeedForwardNetwork(nn.Module):
             [nn.Parameter(b) for b in biases + [output_biases]]
         )
 
-    def forward(self, input_features: torch.tensor):
+    def forward(self, input_features: torch.Tensor) -> torch.Tensor:
         """
-        Computes the forward pass of the network given the input features.
+        Computes the forward propagation through the network using the provided input
+        features.
 
-        :param input_features: Tensor of input features.
-        :return: Output tensor after the forward pass.
+        The forward pass sequentially applies weights, biases, and activation functions
+        for each layer in the network. The output of the last layer is then passed through
+        a softmax function to produce a probability distribution over classes.
+
+        :param input_features: The input tensor containing the features for the network.
+            Expected shape is (batch_size, input_size).
+        :return: The output tensor representing the probability distribution over classes.
+            Shape: (batch_size, output_size).
         """
         layer_features = input_features
-        for weight, bias, activation, param in zip(
-            self.weights, self.biases, self.activations, self.activation_parameters
-        ):
-            layer_features = activation(layer_features @ weight + bias, param.item())
-        return softmax(layer_features, dim=1)
+        for weight, bias, activation in zip(self.weights, self.biases, self.activations):
+            layer_features = (
+                activation(layer_features @ weight + bias, self.activation_parameters)
+                if self.activation_parameters is not None
+                else activation(layer_features @ weight + bias)
+            )
+        return softmax(layer_features @ self.weights[-1] + self.biases[-1], dim=1)
 
     def __str__(self):
         """
@@ -112,27 +126,83 @@ class FeedForwardNetwork(nn.Module):
         return "\n".join([f"{name}:\t{param}" for name, param in self.named_parameters()])
 
 
+def load_parameters_from_files(data_path: Path) -> tuple[list[torch.Tensor], list[torch.Tensor], torch.Tensor, torch.Tensor]:
+    """
+    Load model parameters from the given path.
+
+    Parameters:
+    - data_path (Path): The path where the parameter files are stored.
+
+    Returns:
+    - Tuple containing weights, biases, output_weights, and output_biases as tensors.
+    """
+    weights = [torch.from_numpy(loadtxt(data_path / f"W{i}.txt")).float() for i in (1, 2)]
+    biases = [torch.from_numpy(loadtxt(data_path / f"b{i}.txt")).float() for i in (1, 2)]
+    output_weights = torch.from_numpy(loadtxt(data_path / "U.txt")).float()
+    output_biases = torch.from_numpy(loadtxt(data_path / "c.txt")).float()
+
+    return weights, biases, output_weights, output_biases
+
+
+def visualize_sample_predictions(dataset, model, n_examples: int):
+    """
+    Visualizes a sample of images from the dataset along with their predicted class labels.
+
+    Parameters:
+    - dataset: The MNIST dataset to sample from.
+    - model: The trained model for predictions.
+    - n_examples (int): Number of examples to visualize.
+
+    Returns:
+    - matplotlib figure containing the visualized samples.
+    """
+    fig, axs = subplots(nrows=n_examples, figsize=(2, n_examples * 3))
+
+    for i in range(n_examples):
+        idx = random.randint(0, len(dataset))
+        img, label = dataset[idx]
+        view = img.view(28, 28).numpy()
+        pred_prob, pred_label = torch.max(model(img.view(1, 784)), dim=1)
+        axs[i].set_title(
+            f"Class: {label}\n"
+            f"Prediction: {pred_label.item()}\n"
+            f"Probability: {pred_prob.item():.2f}"
+        )
+        axs[i].imshow(view)
+    return fig
+
+
 def main():
     """
-    Downloads the MNIST dataset and visualizes a random sample of images.
+    Downloads the MNIST dataset, initializes a model with parameters, and visualizes sample predictions.
 
     This function performs the following tasks:
     1. Downloads the MNIST dataset and applies a transformation to convert images into tensors.
-    2. Randomly selects `n_examples` images from the dataset.
-    3. Plots the selected images with their respective class labels.
+    2. Initializes a feed-forward neural network and loads pretrained parameters.
+    3. Visualizes random sample predictions from the dataset.
 
-    :note: The images are displayed using matplotlib and have a resolution of 28x28 pixels.
+    Note:
+    The images are displayed using matplotlib with a resolution of 28x28 pixels.
     """
-    dataset = MNIST(root="data/", download=True, transform=ToTensor())
-    n_examples = 3
-    fig, axes = subplots(nrows=n_examples, figsize=(2, n_examples * 3))
-    for i in range(n_examples):
-        idx = random.randint(0, len(dataset))
-        image, label = dataset[idx]
-        view = image.view(28, 28).numpy()
-        axes[i].set_title(f"Class: {label}")
-        axes[i].imshow(view)
-    fig.show()
+    data_path = Path("..") / "data"
+    # Load parameters and initialize model
+    weights, biases, output_weights, output_biases = load_parameters_from_files(data_path)
+    mnist_model = FeedForwardNetwork(
+        input_size=784,
+        hidden_sizes=[16, 16],
+        activations=[relu, relu],
+        output_size=10,
+    )
+    mnist_model.load_parameters(weights, biases, output_weights, output_biases)
+    print(mnist_model)
+    # Get MNIST dataset
+    dataset = MNIST(
+        str(data_path / "mnist"), train=False, transform=ToTensor(), download=True
+    )
+    # Visualize samples
+    fig = visualize_sample_predictions(dataset, mnist_model, n_examples=2)
+    pyplot.show()
+    fig.savefig(Path("..") / "results" / "mnist.png")
 
 
 if __name__ == "__main__":
