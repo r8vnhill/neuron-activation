@@ -71,9 +71,10 @@ To use this repository:
     ```
 2. Install the necessary libraries:
     ```
-    pip install torch torchvision matplotlib
+    pip install -r requirements.txt
     ```
 3. Run the desired modules or functions!
+
 
 ## Contributions
 
