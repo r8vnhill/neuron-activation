@@ -2,8 +2,11 @@ from typing import Optional
 
 import torch
 from torch import nn
+from torch.optim import Optimizer
 
 from activations import softmax
+from datasets import SizedDataset
+from devices import Device
 from networks import NeuralNetwork
 
 
@@ -60,12 +63,12 @@ class FeedForwardNetwork(NeuralNetwork):
     """
 
     def __init__(
-            self,
-            n_features: int,
-            hidden_layer_sizes: list[int],
-            activation_functions: list[callable],
-            n_classes: int,
-            activation_parameters: Optional[list[object]] = None,
+        self,
+        n_features: int,
+        hidden_layer_sizes: list[int],
+        activation_functions: list[callable],
+        n_classes: int,
+        activation_parameters: Optional[list[object]] = None,
     ):
         super(FeedForwardNetwork, self).__init__()
 
@@ -108,11 +111,11 @@ class FeedForwardNetwork(NeuralNetwork):
 
     # Documented in superclass
     def load_parameters(
-            self,
-            weights: list[torch.Tensor],
-            biases: list[torch.Tensor],
-            output_weights: torch.Tensor,
-            output_biases: torch.Tensor,
+        self,
+        weights: list[torch.Tensor],
+        biases: list[torch.Tensor],
+        output_weights: torch.Tensor,
+        output_biases: torch.Tensor,
     ):
         self.weights = nn.ParameterList(
             [nn.Parameter(w) for w in weights] + [output_weights]
@@ -175,20 +178,23 @@ class FeedForwardNetwork(NeuralNetwork):
         self.cache = []
         layer_input = features
         for weight, bias, activation, parameters in zip(
-                self.weights[:-1],
-                self.biases[:-1],
-                self.activation_functions,
-                self.activation_parameters_mask,
+            self.weights[:-1],
+            self.biases[:-1],
+            self.activation_functions,
+            self.activation_parameters_mask,
         ):
             layer_input = layer_input @ weight + bias
             self.cache.append(layer_input)
-            layer_input = activation(layer_input,
-                                     parameters.item()) if parameters else activation(
-                layer_input)
+            layer_input = (
+                activation(layer_input, parameters.item())
+                if parameters
+                else activation(layer_input)
+            )
         return softmax(layer_input @ self.weights[-1] + self.biases[-1], dim=1)
 
-    def backward(self, input_data: torch.Tensor, target: torch.Tensor,
-                 prediction: torch.Tensor) -> None:
+    def backward(
+        self, input_data: torch.Tensor, target: torch.Tensor, prediction: torch.Tensor
+    ) -> None:
         r"""
         Computes the backward pass, updating gradients for weights and biases.
 
@@ -240,8 +246,9 @@ class FeedForwardNetwork(NeuralNetwork):
         # Handle the output layer's gradient computation.
         self._compute_gradient_for_output_layer(input_data, current_grad)
 
-    def _compute_gradient_for_layer(self, layer_idx: int,
-                                    current_grad: torch.Tensor) -> torch.Tensor:
+    def _compute_gradient_for_layer(
+        self, layer_idx: int, current_grad: torch.Tensor
+    ) -> torch.Tensor:
         """
         Computes the gradient for a specific layer in the neural network.
 
@@ -258,23 +265,22 @@ class FeedForwardNetwork(NeuralNetwork):
         if mask is None:
             # If there are no parameters for the activation function, simply compute the
             # gradient.
-            self.weights[layer_idx].grad = activation(
-                self.cache[layer_idx - 1]).T @ layer_grad
+            self.weights[layer_idx].grad = (
+                activation(self.cache[layer_idx - 1]).T @ layer_grad
+            )
         else:
             # If there are parameters for the activation function, consider them in the
             # gradient.
             # noinspection PyUnresolvedReferences
             self.weights[layer_idx].grad = (
-                    activation(self.cache[layer_idx - 1], mask.item()).T
-                    @ layer_grad
+                activation(self.cache[layer_idx - 1], mask.item()).T @ layer_grad
             )
         # Compute the gradient for the biases.
         self.biases[layer_idx].grad = torch.sum(layer_grad, dim=0)
         if mask is None:
             # Compute the gradient with respect to the previous layer.
-            layer_grad = (
-                    activation(self.cache[layer_idx - 1], gradient=True)
-                    * (layer_grad @ self.weights[layer_idx].T)
+            layer_grad = activation(self.cache[layer_idx - 1], gradient=True) * (
+                layer_grad @ self.weights[layer_idx].T
             )
         else:
             # Compute the gradient with respect to activation parameters.
@@ -283,12 +289,13 @@ class FeedForwardNetwork(NeuralNetwork):
                 mask,
                 gradient=True,
             )
-            layer_grad *= (layer_grad @ self.weights[layer_idx].T)
+            layer_grad *= layer_grad @ self.weights[layer_idx].T
             mask.grad = torch.sum(param_grad * layer_grad)
         return layer_grad
 
-    def _compute_gradient_for_output_layer(self, x: torch.Tensor,
-                                           current_grad: torch.Tensor) -> None:
+    def _compute_gradient_for_output_layer(
+        self, x: torch.Tensor, current_grad: torch.Tensor
+    ) -> None:
         """
         Computes the gradient for the output layer.
 
@@ -303,3 +310,14 @@ class FeedForwardNetwork(NeuralNetwork):
     def __str__(self):
         """Return a string representation of the network's parameters."""
         return "\n".join([f"{name}:\t{param}" for name, param in self.named_parameters()])
+
+
+def train_feed_forward_network(
+    network: FeedForwardNetwork,
+    dataset: SizedDataset,
+    optimizer: Optimizer,
+    epochs: int = 1,
+    batch_size: int = 1,
+    device: Device = Device.CPU,
+) -> None:
+    pass
