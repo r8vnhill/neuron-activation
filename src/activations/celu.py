@@ -6,21 +6,22 @@ def celu(x: torch.Tensor, alpha: float = 1.0, gradient: bool = False) -> torch.T
     Computes the CELU (Continuously Differentiable Exponential Linear Unit) activation function for a given tensor.
 
     The CELU function is defined as:
-    \[ \text{celu}(x, \alpha) =
-    \begin{cases}
-    x & \text{if } x \geq 0 \\
-    \alpha (\exp(\frac{x}{\alpha}) - 1) & \text{otherwise}
-    \end{cases}
-    \]
+
+    .. math::
+        \mathrm{celu}(x, \alpha) = \begin{cases}
+            x                                   & \text{if } x \geq 0 \\
+            \alpha (\exp(\frac{x}{\alpha}) - 1) & \text{otherwise}
+        \end{cases}
 
     Its gradient is:
-    \[
-    \frac{\partial\ \text{celu}(x, \alpha)}{\partial x} =
-    \begin{cases}
-    1 & \text{if } x \geq 0 \\
-    \frac{\text{celu}(x, \alpha) - x e^{\frac{x}{\alpha}}}{\alpha} & \text{if } x < 0
-    \end{cases}
-    \]
+
+    .. math::
+        \frac{\partial\ \text{celu}(x, \alpha)}{\partial x} = \begin{cases}
+            1 & \text{if } x \geq 0 \\
+            \frac{\text{celu}(x, \alpha) - x e^{\frac{x}{\alpha}}}{\alpha}
+                & \text{if } x < 0
+        \end{cases}
+
 
     :param x: Input tensor for which to compute the CELU.
     :param alpha: The alpha value to use in the CELU function.

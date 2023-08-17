@@ -6,10 +6,14 @@ def sigmoid(x: torch.Tensor, gradient: bool = False) -> torch.Tensor:
     Computes the sigmoid activation function for a given tensor.
 
     The sigmoid function is defined as:
-    \[ \text{sigmoid}(x) = \frac{1}{1 + e^{-x}} \]
+
+    .. math::
+        \mathrm{sigmoid}(x) = \frac{1}{1 + e^{-x}}
 
     Its gradient is:
-    \[ \text{sigmoid}'(x) = \text{sigmoid}(x)(1 - \text{sigmoid}(x)) \]
+
+    .. math::
+        \mathrm{sigmoid}'(x) = \mathrm{sigmoid}(x)(1 - \mathrm{sigmoid}(x))
 
     :param x: Input tensor for which to compute the sigmoid.
     :param gradient: If True, compute the gradient of the sigmoid with respect to its input.

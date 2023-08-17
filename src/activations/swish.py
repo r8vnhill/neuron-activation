@@ -8,10 +8,18 @@ def swish(x: torch.Tensor, beta: float = 1.0, gradient: bool = False) -> torch.T
     Computes the Swish activation function for a given tensor.
 
     The Swish function is defined as:
-    \[ \text{swish}(x) = x \times \text{sigmoid}(\beta x) \]
+
+    .. math::
+        \mathrm{swish}(x) = x \times \mathrm{sigmoid}(\beta x)
 
     Its gradient is:
-    \[ \text{swish}'(x) = \text{sigmoid}(\beta x) + \beta x \text{sigmoid}(\beta x) (1 - \text{sigmoid}(\beta x)) \]
+
+    .. math::
+        \mathrm{swish}'(x) =
+            \mathrm{sigmoid}(\beta x)
+            + \beta x \times \mathrm{sigmoid}(\beta x)
+                \times (1 - \mathrm{sigmoid}(\beta x))
+
 
     :param x: Input tensor for which to compute the Swish.
     :param beta: The beta value to use in the Swish function.

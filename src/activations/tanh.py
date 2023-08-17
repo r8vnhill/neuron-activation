@@ -6,10 +6,12 @@ def tanh(x: torch.Tensor, gradient: bool = False) -> torch.Tensor:
     Computes the tanh activation function for a given tensor.
 
     The tanh function is defined as:
-    \[ \text{tanh}(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}} \]
+
+    .. math::
+        \mathrm{tanh}(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 
     Its gradient is:
-    \[ \text{tanh}'(x) = 1 - \text{tanh}^2(x) \]
+        \mathrm{tanh}'(x) = 1 - \mathrm{tanh}^2(x)
 
     :param x: Input tensor for which to compute the tanh.
     :param gradient: If True, compute the gradient of the tanh with respect to its input.

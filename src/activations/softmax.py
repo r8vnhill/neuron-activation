@@ -2,12 +2,13 @@ import torch
 
 
 def softmax(tensor: torch.Tensor, dim: int, stable: bool = True) -> torch.Tensor:
-    """
+    r"""
     Computes the softmax activation function for a given tensor.
 
     The softmax function is defined as:
 
-    softmax(x) = e^(x_i) / sum(e^(x_j)) for all j
+    .. math::
+        \mathrm{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
 
     :param tensor: Input tensor for which to compute the softmax.
     :param dim: The dimension along which to compute the softmax.
