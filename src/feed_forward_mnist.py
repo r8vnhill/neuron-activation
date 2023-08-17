@@ -9,7 +9,7 @@ from torch import nn
 from torchvision.datasets import MNIST, VisionDataset
 from torchvision.transforms import ToTensor
 
-from activation import relu
+from activations.activation import relu
 from network import FeedForwardNetwork, evaluate_network
 
 ModelParameters = tuple[
