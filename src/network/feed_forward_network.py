@@ -3,7 +3,7 @@ from typing import Callable, Optional
 import torch
 from torch import nn
 
-from activations.activation import softmax
+from activations import softmax
 from . import NeuralNetwork
 
 
