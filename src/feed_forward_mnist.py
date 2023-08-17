@@ -78,10 +78,10 @@ def main():
     # Load parameters and initialize model
     weights, biases, output_weights, output_biases = load_parameters_from_files(data_path)
     mnist_model = FeedForwardNetwork(
-        input_size=784,
-        hidden_sizes=[16, 16],
-        activations=[relu, relu],
-        output_size=10,
+        n_features=784,
+        hidden_layer_sizes=[16, 16],
+        activation_functions=[relu, relu],
+        n_classes=10,
     )
     mnist_model.load_parameters(weights, biases, output_weights, output_biases)
     print(mnist_model)
