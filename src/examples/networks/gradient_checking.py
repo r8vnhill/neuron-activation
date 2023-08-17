@@ -2,7 +2,7 @@ import torch
 
 import loss
 from activations import sigmoid, relu
-from network import FeedForwardNetwork
+from networks import FeedForwardNetwork
 
 
 def gradient_checking(epsilon: float = 1e-6):

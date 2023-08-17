@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import VisionDataset
 
 from devices import Device
-from network import NeuralNetwork
+from networks import NeuralNetwork
 
 
 def evaluate_network(

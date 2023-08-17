@@ -4,7 +4,7 @@ import torch
 from torch import nn
 
 from activations import softmax
-from network import NeuralNetwork
+from networks import NeuralNetwork
 
 
 def get_init_weights(shape: tuple[int, int]) -> nn.Parameter:

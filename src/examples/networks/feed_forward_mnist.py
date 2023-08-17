@@ -10,7 +10,7 @@ from torchvision.datasets import MNIST, VisionDataset
 from torchvision.transforms import ToTensor
 
 from activations import relu
-from network import FeedForwardNetwork, evaluate_network
+from networks import FeedForwardNetwork, evaluate_network
 
 ModelParameters = tuple[
     list[torch.Tensor], list[torch.Tensor], torch.Tensor, torch.Tensor
@@ -74,7 +74,7 @@ def main():
     Note:
     The images are displayed using matplotlib with a resolution of 28x28 pixels.
     """
-    data_path = Path("..") / "data"
+    data_path = Path("../../..") / "data"
     # Load parameters and initialize model
     weights, biases, output_weights, output_biases = load_parameters_from_files(data_path)
     mnist_model = FeedForwardNetwork(
@@ -92,7 +92,7 @@ def main():
     # Visualize samples
     fig = visualize_sample_predictions(dataset, mnist_model, n_examples=2)
     pyplot.show()
-    fig.savefig(Path("..") / "results" / "mnist.png")
+    fig.savefig(Path("../../..") / "results" / "mnist.png")
     # Evaluate model
     evaluate_network(mnist_model, dataset)
 
