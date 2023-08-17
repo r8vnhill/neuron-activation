@@ -1,24 +1,26 @@
 # PyTorch Playground
 
-Dive into the PyTorch Playground - a toolkit of neural network components built with 
-PyTorch.
-Ideal for beginners keen on exploring activations or for pros aiming to tweak a custom 
-feed-forward network.
+Welcome to the PyTorch Playground - a modular and flexible toolkit filled with neural network components built using 
+_PyTorch_.
+Whether you're just starting your deep learning journey or are a seasoned expert, this playground offers a range of
+utilities, from experimenting with activations to building custom feed-forward networks with ease.
+
 
 ## Table of Contents
 
 1. [Activations](#activations)
-2. [Devices](#devices)
-3. [Neural Network](#neural-network)
+2. [Loss](#loss) 
+3. [Devices](#devices)
+4. [Neural Network](#neural-network)
     1. [FeedForward Network](#feedforward-network)
     2. [Evaluation](#evaluation)
-4. [MNIST Model Demo](#mnist-model-demo)
-5. [Setup & Usage](#setup--usage)
-6. [Contribute](#contribute)
+5. [MNIST Model Demo](#mnist-model-demo)
+6. [Setup & Usage](#setup--usage)
+7. [Contribute](#contribute)
 
 ## Activations
 
-Find a collection of commonly-used activation functions in the `activations` file:
+Find a collection of commonly-used activation functions in the `activations` package:
 
 - **Sigmoid**: `sigmoid(x)`
 - **Tanh**: `tanh(x)`
@@ -28,6 +30,13 @@ Find a collection of commonly-used activation functions in the `activations` fil
 - **Softmax**: `softmax(tensor, dim, stable)`
 
 Each is well-documented with its formula and PyTorch code.
+
+## Loss
+
+The `loss` package offers:
+
+- **Cross Entropy Loss**: `cross_entropy(predictions, targets, stable, eps)`
+- **Binary Cross Entropy Loss**: `binary_cross_entropy(predictions, targets, stable, eps)`
 
 ## Devices
 
@@ -60,7 +69,7 @@ This function:
 
 - Downloads MNIST.
 - Transforms images.
-- Picks two random images.
+- Selects two random images.
 - Constructs a `FeedForwardNetwork`.
 - Loads pre-trained model weights.
 - Showcases the images, predictions, and overall accuracy.
@@ -83,4 +92,6 @@ This function:
 
 ## Contribute
 
-Fork, PR, or suggest improvements via issues!
+We'd love your contribution! Feel free to fork, submit a PR, or suggest improvements via issues.
+Whether you've found a bug, have a feature request, or just want to provide feedback, your input is invaluable to
+making _PyTorch Playground_ better for everyone.
