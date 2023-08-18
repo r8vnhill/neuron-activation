@@ -1,121 +1,68 @@
-# PyTorch Playground
+# Neuron Activation — A _PyTorch_ Playground
 
-Welcome to the PyTorch Playground - a modular and flexible toolkit filled with neural network components built using 
-_PyTorch_.
-Whether you're just starting your deep learning journey or are a seasoned expert, this playground offers a range of
-utilities, from experimenting with activations to building custom feed-forward networks with ease.
+![License Badge](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)
 
+Welcome to the _PyTorch Playground_, a dedicated learning platform designed to illustrate the nuances of neural 
+networks and deep learning.
+Built upon _PyTorch_, this playground serves both beginners, who are taking their first steps in the vast domain of deep
+learning, and experts seeking a refresher or hands-on experimentation.
+Dive deep into neural architectures, activation functions, and more, all while getting hands-on experience.
 
 ## Table of Contents
 
+- [Overview](#overview)
+- [MNIST Model Demo: Understanding Feed-forward Networks](#mnist-model-demo-understanding-feed-forward-networks)
+  - [Sample Output](#sample-output)
+- [Setup & Usage](#setup--usage)
+- [Documentation](#documentation)
+- [Contribute & Collaborate](#contribute--collaborate)
 
+## Overview
 
-[//]: # (## Activations)
+The PyTorch Playground is designed not just as a toolkit but as a holistic educational experience.
+Each module is meticulously crafted to provide clarity, offering intuitive visualizations, explanations, and code
+implementations of foundational deep learning concepts.
 
-[//]: # ()
-[//]: # (Find a collection of commonly-used activation functions in the `activations` package:)
+## MNIST Model Demo: Understanding Feed-forward Networks
 
-[//]: # ()
-[//]: # (- **Sigmoid**: `sigmoid&#40;x&#41;`)
+Using the renowned MNIST dataset, the `feed_forward_mnist` demonstration provides a tangible example of how feed-forward
+networks operate:
 
-[//]: # (- **Tanh**: `tanh&#40;x&#41;`)
+- Download and introduction to the MNIST dataset.
+- Explaining the significance of data transformations.
+- Selection and visualization of sample data.
+- Step-by-step construction of a `FeedForwardNetwork`.
+- Integration and interpretation of pre-trained model weights.
+- Insightful visualization showcasing predictions and overall model accuracy.
 
-[//]: # (- **ReLU**: `relu&#40;x&#41;`)
+### Sample Output
 
-[//]: # (- **Swish**: `swish&#40;x, beta&#41;`)
-
-[//]: # (- **CELU**: `celu&#40;x, alpha&#41;`)
-
-[//]: # (- **Softmax**: `softmax&#40;tensor, dim, stable&#41;`)
-
-[//]: # ()
-[//]: # (Each is well-documented with its formula and PyTorch code.)
-
-[//]: # ()
-[//]: # (## Loss)
-
-[//]: # ()
-[//]: # (The `loss` package offers:)
-
-[//]: # ()
-[//]: # (- **Cross Entropy Loss**: `cross_entropy&#40;predictions, targets, stable, eps&#41;`)
-
-[//]: # (- **Binary Cross Entropy Loss**: `binary_cross_entropy&#40;predictions, targets, stable, eps&#41;`)
-
-[//]: # ()
-[//]: # (## Devices)
-
-[//]: # ()
-[//]: # (The `devices` file introduces a `Device` enum that covers available devices &#40;CPU and CUDA&#41;)
-
-[//]: # (for PyTorch.)
-
-[//]: # ()
-[//]: # (## Neural Network)
-
-[//]: # ()
-[//]: # (Within the `network` package:)
-
-[//]: # ()
-[//]: # (- `NeuralNetwork` is an abstract base class for all networks, offering a unified interface.)
-
-[//]: # (  )
-[//]: # (### FeedForward Network)
-
-[//]: # ()
-[//]: # (Defined in `feed_forward_network`, the `FeedForwardNetwork` class offers:)
-
-[//]: # ()
-[//]: # (- Customizable layers and activations.)
-
-[//]: # (- Parameterized activations.)
-
-[//]: # (- Ability to load weights, determine input layer size, and provide network details.)
-
-[//]: # ()
-[//]: # (### Evaluation)
-
-[//]: # ()
-[//]: # (`evaluation` offers `evaluate_network&#40;NeuralNetwork, VisionDataset, int, Device&#41;`, )
-[//]: # (assessing a neural network's accuracy on a dataset.)
-
-## MNIST Model Demo
-
-`feed_forward_mnist` demonstrates the `FeedForwardNetwork`.
-This function:
-
-- Downloads MNIST.
-- Transforms images.
-- Selects two random images.
-- Constructs a `FeedForwardNetwork`.
-- Loads pre-trained model weights.
-- Showcases the images, predictions, and overall accuracy.
-
-### Sample
-
-![MNIST Model Output](results/mnist.png)
+![MNIST Model Visualization](results/mnist.png)
 
 ## Setup & Usage
 
-1. Clone:
-    ```
+1. **Clone the Repository**:
+    ```bash
     git clone https://github.com/r8vnhill/pytorch-playground.git
     ```
-2. Install:
-    ```
+2. **Install Dependencies**:
+    ```bash
     pip install -r requirements.txt
     ```
-3. Execute your desired modules!
+3. **Engage & Learn**:
+    Navigate through modules, read explanations, run code snippets, and deepen your understanding of neural networks.
 
 ## Documentation
 
-Each module in this module contains a `README.md` file with detailed documentation.
+Every learner is unique, and to cater to different learning paces and styles, we've ensured comprehensive documentation
+for every module.
+Each is complemented by a `README.md` that breaks down complex topics into understandable chunks.
 
-1. [Activation Functions](src/activations)
+- [Deep Dive into Activation Functions](src/activations)
 
+## Contribute & Collaborate
 
-## Contribute
-
-We'd love your contribution! Feel free to fork, submit a PR, or suggest improvements via issues.
-Whether you've found a bug, have a feature request, or just want to provide feedback, your input is invaluable to
-making _PyTorch Playground_ better for everyone.
+The world of deep learning is vast, and the _PyTorch Playground_ thrives on collaborative efforts.
+Whether you have an idea for a new module, want to improve existing content, or simply share feedback for fellow
+learners, every contribution is invaluable.
+Fork, create PRs, or share your insights — let's make learning deep learning a rewarding experience for everyone!
