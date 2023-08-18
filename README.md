@@ -8,59 +8,76 @@ utilities, from experimenting with activations to building custom feed-forward n
 
 ## Table of Contents
 
-1. [Activations](#activations)
-2. [Loss](#loss) 
-3. [Devices](#devices)
-4. [Neural Network](#neural-network)
-    1. [FeedForward Network](#feedforward-network)
-    2. [Evaluation](#evaluation)
-5. [MNIST Model Demo](#mnist-model-demo)
-6. [Setup & Usage](#setup--usage)
-7. [Contribute](#contribute)
 
-## Activations
 
-Find a collection of commonly-used activation functions in the `activations` package:
+[//]: # (## Activations)
 
-- **Sigmoid**: `sigmoid(x)`
-- **Tanh**: `tanh(x)`
-- **ReLU**: `relu(x)`
-- **Swish**: `swish(x, beta)`
-- **CELU**: `celu(x, alpha)`
-- **Softmax**: `softmax(tensor, dim, stable)`
+[//]: # ()
+[//]: # (Find a collection of commonly-used activation functions in the `activations` package:)
 
-Each is well-documented with its formula and PyTorch code.
+[//]: # ()
+[//]: # (- **Sigmoid**: `sigmoid&#40;x&#41;`)
 
-## Loss
+[//]: # (- **Tanh**: `tanh&#40;x&#41;`)
 
-The `loss` package offers:
+[//]: # (- **ReLU**: `relu&#40;x&#41;`)
 
-- **Cross Entropy Loss**: `cross_entropy(predictions, targets, stable, eps)`
-- **Binary Cross Entropy Loss**: `binary_cross_entropy(predictions, targets, stable, eps)`
+[//]: # (- **Swish**: `swish&#40;x, beta&#41;`)
 
-## Devices
+[//]: # (- **CELU**: `celu&#40;x, alpha&#41;`)
 
-The `devices` file introduces a `Device` enum that covers available devices (CPU and CUDA)
-for PyTorch.
+[//]: # (- **Softmax**: `softmax&#40;tensor, dim, stable&#41;`)
 
-## Neural Network
+[//]: # ()
+[//]: # (Each is well-documented with its formula and PyTorch code.)
 
-Within the `network` package:
+[//]: # ()
+[//]: # (## Loss)
 
-- `NeuralNetwork` is an abstract base class for all networks, offering a unified interface.
-  
-### FeedForward Network
+[//]: # ()
+[//]: # (The `loss` package offers:)
 
-Defined in `feed_forward_network`, the `FeedForwardNetwork` class offers:
+[//]: # ()
+[//]: # (- **Cross Entropy Loss**: `cross_entropy&#40;predictions, targets, stable, eps&#41;`)
 
-- Customizable layers and activations.
-- Parameterized activations.
-- Ability to load weights, determine input layer size, and provide network details.
+[//]: # (- **Binary Cross Entropy Loss**: `binary_cross_entropy&#40;predictions, targets, stable, eps&#41;`)
 
-### Evaluation
+[//]: # ()
+[//]: # (## Devices)
 
-`evaluation` offers `evaluate_network(NeuralNetwork, VisionDataset, int, Device)`, 
-assessing a neural network's accuracy on a dataset.
+[//]: # ()
+[//]: # (The `devices` file introduces a `Device` enum that covers available devices &#40;CPU and CUDA&#41;)
+
+[//]: # (for PyTorch.)
+
+[//]: # ()
+[//]: # (## Neural Network)
+
+[//]: # ()
+[//]: # (Within the `network` package:)
+
+[//]: # ()
+[//]: # (- `NeuralNetwork` is an abstract base class for all networks, offering a unified interface.)
+
+[//]: # (  )
+[//]: # (### FeedForward Network)
+
+[//]: # ()
+[//]: # (Defined in `feed_forward_network`, the `FeedForwardNetwork` class offers:)
+
+[//]: # ()
+[//]: # (- Customizable layers and activations.)
+
+[//]: # (- Parameterized activations.)
+
+[//]: # (- Ability to load weights, determine input layer size, and provide network details.)
+
+[//]: # ()
+[//]: # (### Evaluation)
+
+[//]: # ()
+[//]: # (`evaluation` offers `evaluate_network&#40;NeuralNetwork, VisionDataset, int, Device&#41;`, )
+[//]: # (assessing a neural network's accuracy on a dataset.)
 
 ## MNIST Model Demo
 
@@ -89,6 +106,13 @@ This function:
     pip install -r requirements.txt
     ```
 3. Execute your desired modules!
+
+## Documentation
+
+Each module in this module contains a `README.md` file with detailed documentation.
+
+1. [Activation Functions](src/activations)
+
 
 ## Contribute
 
