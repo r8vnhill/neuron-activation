@@ -1,3 +1,6 @@
+#  Copyright (c) 2023, Roäc Ravenhill.
+#  BSD Zero Clause License.
+
 import torch
 
 

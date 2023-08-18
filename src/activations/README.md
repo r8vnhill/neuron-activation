@@ -2,11 +2,12 @@
 
 ## Overview
 
-`activations` provides a suite of activation functions commonly employed in the context of neural networks. 
-In addition to the functional implementation, this module offers gradient computation for each activation function, 
-aiding in the understanding and application of backpropagation. 
-The `softmax` function is an exception, as it inherently involves multiple inputs and outputs, making its gradient 
-computation distinct.
+The `activations` module provides an array of widely-used activation functions suitable for neural network 
+architectures.
+Besides the functional expressions, this module meticulously computes the gradient for each function, serving as a
+crucial tool in the comprehension and application of the backpropagation algorithm.
+The exception to this is the `softmax` function, given its unique nature of handling multiple inputs and outputs which
+leads to a distinct gradient evaluation.
 
 ## Table of Contents
 
@@ -19,29 +20,29 @@ computation distinct.
 
 ## Sigmoid
 
-**Location**: Defined in `sigmoid.py`
+**Location**: [`sigmoid.py`](sigmoid.py)
 
 **Formula**: 
 
 ![](https://quicklatex.com/cache3/7a/ql_668dc0601663ef0c48396ed1ac15617a_l3.png)
 
-The sigmoid function compresses its input to the range between 0 and 1.
+*Description*: The sigmoid function confines its input within the range of 0 and 1.
 
 **Gradient**:
 
 ![](https://quicklatex.com/cache3/1e/ql_bda49ddfef38d523f27009a45c28b61e_l3.png)
 
-This gradient results in a vanishing gradient problem for values that are very high or very low.
+Notably, this gradient can induce the vanishing gradient issue for extremely high or low values.
 
 ## Tanh
 
-**Location**: Defined in `tanh.py`
+**Location**: [`tanh.py`](tanh.py)
 
 **Formula**:
 
 ![](https://quicklatex.com/cache3/9f/ql_72eebf5038a7f863b236caa209a7b09f_l3.png)
 
-The tanh function compresses its input to the range between -1 and 1.
+*Description*: The tanh function bounds its input within the range of -1 and 1.
 
 **Gradient**:
 
@@ -49,58 +50,61 @@ The tanh function compresses its input to the range between -1 and 1.
 
 ## ReLU
 
-**Location**: Defined in `relu.py`
+**Location**: [`relu.py`](relu.py)
 
 **Formula**: 
 
 ![](https://quicklatex.com/cache3/a0/ql_37999e1feff124baca2413a754b3bfa0_l3.png)
 
-ReLU introduces non-linearity into the model without affecting the receptive fields of convolutions.
+*Description*: ReLU imparts non-linearity in models without perturbing the receptive fields of convolutions.
 
 **Gradient**: 
-\[ 
-f'(x) = 
-\begin{cases} 
-1 & \text{if } x > 0 \\
-0 & \text{otherwise} 
-\end{cases}
-\]
 
-This makes it computationally efficient but can result in dead neurons during training.
+![](https://quicklatex.com/cache3/41/ql_f90d9e252e775d7a7c0591082d1fd941_l3.png)
+
+Being computationally efficient, ReLU can occasionally cause dead neurons during the training process.
 
 ## Swish
 
-**Location**: Defined in `swish`
+**Location**: [`swish.py`](swish.py)
 
-**Formula**: \[ f(x) = x \times sigmoid(\beta x) \] where \( \beta \) is a trainable parameter.
+**Formula**:
 
-Swish is a self-gated function, attempting to balance the advantages of ReLU and sigmoid.
+![](https://quicklatex.com/cache3/8d/ql_70016b335ea865d9640e6af078f4e08d_l3.png)
 
-**Gradient**: The gradient is complex due to the presence of \( \beta \) and is often computed using automatic differentiation tools.
+Where: ![](https://quicklatex.com/cache3/e8/ql_9a315236dfcda864a869107144a3fbe8_l3.png) is a learnable parameter.
+
+*Description*: Swish stands as a self-gated function, synthesizing the merits of both ReLU and sigmoid.
+
+**Gradient**: 
+
+![](https://quicklatex.com/cache3/00/ql_e0b16a0e5c70dc33fae2dd6df8f09400_l3.png)
 
 ## CELU
 
-**Location**: Defined in `celu`
+**Location**: [`celu.py`](celu.py)
 
 **Formula**: 
-\[ 
-f(x) = 
-\begin{cases} 
-x & \text{if } x > 0 \\
-\alpha \times (e^{\frac{x}{\alpha}} - 1) & \text{otherwise} 
-\end{cases}
-\]
 
-CELU is a variant of the exponential linear units (ELU) with a controllable scaling parameter \( \alpha \).
+![](https://quicklatex.com/cache3/f3/ql_c5273c8c3683571ded65e128719665f3_l3.png)
 
-**Gradient**: The gradient has different expressions for positive and negative values of x, with the negative portion involving \( \alpha \).
+*Description*: CELU is an extension of the exponential linear units (ELU), enhanced with a scalable parameter 
+![](https://quicklatex.com/cache3/a0/ql_0c3e2deb84c57937afcc3a11a786fea0_l3.png)
+
+**Gradient**:
+
+![](https://quicklatex.com/cache3/a9/ql_f5f8b0d44fbd0efab3c215f8bf8ea6a9_l3.png)
 
 ## Softmax
 
-**Location**: Defined in `softmax`
+**Location**: [`softmax.py`](softmax.py)
 
-**Formula**: \[ f(x)_i = \frac{e^{x_i}}{\sum_{j=1}^{N} e^{x_j}} \]
+**Formula**:
 
-The softmax function is used in multi-class classification problems. It converts input into a probability distribution over multiple classes.
+![](https://quicklatex.com/cache3/59/ql_9798671b5f273c3282d12bd273d73b59_l3.png)
 
-**Gradient**: The gradient of softmax is more intricate due to the normalization involved, and its computation requires the Jacobian matrix.
+*Description*: The softmax function is essential for multi-class categorization tasks, transmuting inputs into a
+probability distribution spread across multiple categories.
+
+**Gradient**: Evaluating the gradient of softmax demands intricate attention due to the inherent normalization.
+This computation typically necessitates the use of the _Jacobian matrix_.

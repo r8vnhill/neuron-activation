@@ -13,3 +13,5 @@ __all__ = [
     "swish",
     "tanh",
 ]
+
+__author__ = ["Roäc Ravenhill"]
