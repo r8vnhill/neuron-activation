@@ -1,4 +1,12 @@
 from ._sized_dataset import SizedDataset
-from .random_dataset import RandomDataset
+from .bernoulli_dataset import BernoulliDataset, RandomDataset
+from .random_normal_dataset import RandomNormalDataset
+from .random_uniform_dataset import RandomUniformDataset
 
-__all__ = ["RandomDataset", "SizedDataset"]
+__all__ = [
+    "BernoulliDataset",
+    "RandomDataset",
+    "RandomNormalDataset",
+    "RandomUniformDataset",
+    "SizedDataset",
+]

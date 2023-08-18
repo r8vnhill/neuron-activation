@@ -1,50 +1,64 @@
-from typing import final, Final
+import abc
+from typing import Final, Callable
 
 import torch
 
 from ._sized_dataset import SizedDataset
 
 
-@final
-class RandomDataset(SizedDataset[tuple[torch.Tensor, torch.Tensor]]):
+class RandomDataset(SizedDataset[tuple[torch.Tensor, torch.Tensor]], abc.ABC):
     """
-    A dataset class that generates random data and labels.
-    This dataset is meant for simulation purposes and is not derived from real-world data.
+    `RandomDataset` facilitates the creation of a synthetic dataset filled with random
+    data and corresponding labels.
+    It serves as a tool primarily designed for simulation, prototyping, and testing where
+    access to real-world data might be restrictive or unnecessary.
 
-    The RandomDataset provides random tensors for both features and labels, making it
-    useful for generating dummy data for testing or demonstration purposes without
-    relying on external data sources.
+    This class generates random tensors for both data (features) and labels based on
+    user-defined dimensions and classes.
+    It proves useful when one needs to quickly generate dummy data for tasks like model
+    testing or demonstration without relying on external datasets.
 
-    :param n_examples: The number of examples in the dataset.
-    :param n_features: The number of features for each example.
-    :param n_classes: The number of distinct classes for labeling.
+    :param n_examples: Total number of samples in the dataset.
+    :param n_features: Dimensionality of each data sample.
+    :param n_classes: Total distinct class labels.
+    :param random_generator: A function to produce the random data tensor.
+                             Allows users to define their custom random generation logic.
 
-    :raises AssertionError: If any of the input parameters is less than or equal to zero.
-
-    Note
-    ----
-    This class is marked as `final`, meaning it cannot be subclassed.
+    :raises AssertionError: If any of the parameters `n_examples`, `n_features`, or
+                            `n_classes` is less than or equal to zero.
     """
 
     __n_examples: Final[int]
     __data: Final[torch.Tensor]
     __labels: Final[torch.Tensor]
 
-    def __init__(self, n_examples: int, n_features: int, n_classes: int):
+    def __init__(
+        self,
+        n_examples: int,
+        n_features: int,
+        n_classes: int,
+        random_generator: Callable[[int, int], torch.Tensor],
+    ):
+        super().__init__()
+
+        # Assert input conditions
         assert n_examples > 0, "Number of examples should be greater than 0."
         assert n_features > 0, "Number of features should be greater than 0."
         assert n_classes > 0, "Number of classes should be greater than 0."
 
-        super(RandomDataset, self).__init__()
         self.__n_examples = n_examples
-        self.__data = torch.randn(n_examples, n_features)
+        self.__data = random_generator(n_examples, n_features)
         self.__labels = torch.randint(0, n_classes, (n_examples,))
 
     def __len__(self) -> int:
-        """Returns the size of the dataset. """
+        """Returns the number of samples in the dataset."""
         return self.__n_examples
 
     def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
-        """Retrieves the data and label pair at a specified index.  """
-        return self.__data[index], self.__labels[index]
+        """
+        Fetches a specific data-label pair based on the provided index.
 
+        :param index: Index of the desired data-label pair.
+        :return: A tuple containing the data sample and its corresponding label.
+        """
+        return self.__data[index], self.__labels[index]
