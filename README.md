@@ -54,11 +54,7 @@ networks operate:
 
 ## Documentation
 
-Every learner is unique, and to cater to different learning paces and styles, we've ensured comprehensive documentation
-for every module.
-Each is complemented by a `README.md` that breaks down complex topics into understandable chunks.
-
-- [Deep Dive into Activation Functions](src/activations)
+Each module is accompanied by a notebook providing a detailed explanation of the concepts and code.
 
 ## Contribute & Collaborate
 
