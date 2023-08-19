@@ -43,5 +43,3 @@ class Alignment:
         """
         ...
 ```
-
-# Rule 2:
