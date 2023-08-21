@@ -24,7 +24,7 @@ class NeuralNetwork(nn.Module, InputSupport, abc.ABC):
     Abstract base class for neural networks.
     """
 
-    cache: list[torch.Tensor]
+    __cache: list[torch.Tensor]
 
     @abc.abstractmethod
     def load_parameters(
@@ -42,3 +42,4 @@ class NeuralNetwork(nn.Module, InputSupport, abc.ABC):
         :param output_weights: The weight tensor for the output layer.
         :param output_biases: The bias tensor for the output layer.
         """
+        ...

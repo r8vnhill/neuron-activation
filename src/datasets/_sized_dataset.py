@@ -1,5 +1,5 @@
 import abc
-from typing import Sized, TypeVar, Generic
+from typing import Sized, TypeVar, Generic, Final, Optional
 
 from torch.utils.data import Dataset
 
@@ -31,5 +31,23 @@ class SizedDataset(Dataset[T], Generic[T], Sized, abc.ABC):
     Attributes:
     T: The type of elements in the dataset.
     """
+    _data: Final[Optional[T]] = None
+    _labels: Final[Optional[T]] = None
 
-    ...
+    @property
+    def data(self) -> T:
+        """
+        Returns the data stored in the dataset.
+
+        :return: The data stored in the dataset.
+        """
+        return self._data
+
+    @property
+    def labels(self) -> T:
+        """
+        Returns the labels stored in the dataset.
+
+        :return: The labels stored in the dataset.
+        """
+        return self._labels

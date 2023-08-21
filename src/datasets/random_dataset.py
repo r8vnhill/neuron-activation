@@ -29,8 +29,6 @@ class RandomDataset(SizedDataset[tuple[torch.Tensor, torch.Tensor]], abc.ABC):
     """
 
     __n_examples: Final[int]
-    __data: Final[torch.Tensor]
-    __labels: Final[torch.Tensor]
 
     def __init__(
         self,
@@ -47,8 +45,8 @@ class RandomDataset(SizedDataset[tuple[torch.Tensor, torch.Tensor]], abc.ABC):
         assert n_classes > 0, "Number of classes should be greater than 0."
 
         self.__n_examples = n_examples
-        self.__data = random_generator(n_examples, n_features)
-        self.__labels = torch.randint(0, n_classes, (n_examples,))
+        self._data = random_generator(n_examples, n_features)
+        self._labels = torch.randint(0, n_classes, (n_examples,))
 
     def __len__(self) -> int:
         """Returns the number of samples in the dataset."""
@@ -61,4 +59,4 @@ class RandomDataset(SizedDataset[tuple[torch.Tensor, torch.Tensor]], abc.ABC):
         :param index: Index of the desired data-label pair.
         :return: A tuple containing the data sample and its corresponding label.
         """
-        return self.__data[index], self.__labels[index]
+        return self._data[index], self._labels[index]
