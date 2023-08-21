@@ -7,7 +7,7 @@ from activations import softmax
 from networks import NeuralNetwork
 
 
-def get_init_weights(shape: tuple[int, int]) -> nn.Parameter:
+def _get_init_weights(shape: tuple[int, int]) -> nn.Parameter:
     """
     Initialize weights for a neural network layer with random values from a normal
     distribution.
@@ -86,7 +86,7 @@ class FeedForwardNetwork(NeuralNetwork):
         # function
         self.__weights = nn.ParameterList(
             [
-                get_init_weights((layer_sizes[i], layer_sizes[i + 1]))
+                _get_init_weights((layer_sizes[i], layer_sizes[i + 1]))
                 for i in range(len(layer_sizes) - 1)
             ]
         )
@@ -198,60 +198,200 @@ class FeedForwardNetwork(NeuralNetwork):
 
     def backward(
         self, features: torch.Tensor, targets: torch.Tensor, predictions: torch.Tensor
-    ):
-        # The gradient of the loss with respect to the output of the network.
-        # We compute this by finding the difference between the predicted values
-        # and the actual targets, normalized by the number of samples.
-        current_grad = (predictions - targets) / targets.size(0)
-        # Iterate through each layer in reverse order, starting from the output layer
-        # and moving toward the input layer.
+    ) -> None:
+        """
+        Computes the backward pass of the neural network using the back-propagation
+        algorithm.
+
+        Back-propagation is a supervised learning algorithm for training feedforward
+        neural networks.
+        It computes the gradient of the loss function with respect to each weight by
+        propagating the gradient backward in the network. The main principle is the chain
+        rule of calculus which allows us to find the gradient of the loss with respect to
+        any weight in the network.
+
+        Here's a brief overview of the steps taken in back-propagation:
+
+        1. **Output Error Calculation**: Compute the difference between the network's
+            prediction and the actual target. This difference, normalized by the number of
+            samples, gives the gradient of the loss with respect to the outputs of the
+            last layer.
+        2. **Backward Pass Through Layers**: For each layer, starting from the last and
+            moving to the first, compute the gradient of the loss with respect to the
+            weights, biases, and outputs of that layer. This involves:
+            - Using the gradient of the loss with respect to the outputs of the current
+                layer to compute the gradient with respect to the weights and biases.
+            - Using the gradient with respect to the weights and the outputs of the
+                previous layer to compute the gradient with respect to the outputs of the
+                previous layer.
+        3. **Activation Function Gradient**: When computing the gradient with respect to
+            the outputs of a layer, we consider the gradient of the layer's activation
+            function. If the activation function has parameters, we also compute the
+            gradient with respect to those parameters.
+
+        :param features: The input samples to the neural network.
+            Shape: [batch_size, n_features].
+        :param targets: The actual target values corresponding to the input samples.
+            Shape: [batch_size, n_classes].
+        :param predictions: The predicted outputs produced by the forward pass of the
+            neural network.
+            Shape: [batch_size, n_classes].
+        :return: None. The method updates the gradients for the weights and biases
+            in-place.
+        """
+        current_grad = FeedForwardNetwork._initialize_gradient(predictions, targets)
+        # Handle all layers except the first
         for i in range(len(self.__weights) - 1, 0, -1):
-            # If there are no parameters associated with the activation function:
-            if self.__activation_functions_parameters_mask[i - 1] is None:
-                # Compute the gradient of the loss with respect to the weights.
-                self.__weights[i].grad = (
-                    self.__activation_functions[i - 1](self.__cache[i - 1]).t()
-                    @ current_grad
-                )
-            else:
-                # Compute the gradient of the loss with respect to the weights,
-                # considering the parameters of the activation function.
-                self.__weights[i].grad = (
-                    self.__activation_functions[i - 1](
-                        self.__cache[i - 1],
-                        self.__activation_functions_parameters_mask[i - 1].item(),
-                    ).t()
-                    @ current_grad
-                )
-            # Compute the gradient of the loss with respect to the biases.
-            self.__biases[i].grad = current_grad.sum(dim=0)
-            # Compute the gradient of the loss with respect to the outputs of the previous
-            # layer.
-            h_grad = current_grad @ self.__weights[i].t()
-            # Check if there are parameters associated with the activation function.
-            if self.__activation_functions_parameters_mask[i - 1] is None:
-                # Update the current gradient considering the gradient of the activation
-                # function.
-                current_grad = (
-                    self.__activation_functions[i - 1](self.__cache[i - 1], gradient=True)
-                    * h_grad
-                )
-            else:
-                # Update the current gradient considering the gradient of the activation
-                # function and its parameters. Also, compute the gradient for the
-                # parameters of the activation function.
-                current_grad, p_grad = self.__activation_functions[i - 1](
+            current_grad = self._layer_gradient(i, current_grad)
+        self._first_layer_gradient(features, current_grad)
+
+    @staticmethod
+    def _initialize_gradient(
+        predictions: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Initializes the gradient for the backward pass of the neural network.
+
+        This method calculates the gradient of the loss with respect to the output of the
+        network, which forms the starting point for the back-propagation algorithm.
+        Specifically, it computes the difference between the predicted values and the
+        actual target values. This difference is then normalized by the number of samples
+        to provide the average gradient.
+
+        The method assumes that a cross-entropy loss or similar is used, where the
+        derivative of the loss with respect to the predictions is simply
+        `(predictions - targets)`.
+
+        :param predictions: The predicted outputs produced by the forward pass of the
+            neural network.
+            Shape: [batch_size, n_classes].
+        :param targets: The actual target values corresponding to the input samples.
+            Shape: [batch_size, n_classes].
+        :return: Tensor representing the gradient of the loss with respect to the
+            network's outputs.
+            Shape: [batch_size, n_classes].
+        """
+        return (predictions - targets) / targets.size(0)
+
+    def _layer_gradient(self, i: int, current_grad: torch.Tensor) -> torch.Tensor:
+        """
+        Computes the gradient for the weights, biases, and outputs of a given layer
+        during the back-propagation of the neural network.
+
+        The method updates the gradient values for the weights and biases of the specified
+        layer based on the input gradient (`current_grad`) which represents the gradient
+        of the loss with respect to the outputs of the current layer. Additionally, it
+        computes the gradient of the loss with respect to the outputs of the previous
+        layer, which will be used as input for the next step in back-propagation.
+
+        The gradient computation involves a few steps:
+        1. The gradient for the weights is computed by taking the outer product of the
+            gradient of the activation function of the layer's outputs (or their
+            derivatives) and the current gradient.
+        2. The gradient for the biases is the sum of the current gradient over the batch
+            dimension.
+        3. The gradient for the previous layer's outputs is computed by multiplying the
+            current gradient with the transpose of the current layer's weights.
+
+        :param i: Index of the current layer for which the gradient computations are being
+            performed. 0-based index with 0 representing the first hidden layer.
+        :param current_grad: Tensor representing the gradient of the loss with respect to
+            the outputs of the current layer.
+            Shape: [batch_size, n_neurons_in_current_layer].
+        :return: Tensor representing the gradient of the loss with respect to the outputs
+            of the previous layer.
+            Shape: [batch_size, n_neurons_in_previous_layer].
+        """
+        if self.__activation_functions_parameters_mask[i - 1] is None:
+            self.__weights[i].grad = (
+                self.__activation_functions[i - 1](self.__cache[i - 1]).t() @ current_grad
+            )
+        else:
+            self.__weights[i].grad = (
+                self.__activation_functions[i - 1](
                     self.__cache[i - 1],
-                    self.__activation_functions_parameters_mask[i - 1],
-                    gradient=True,
-                )
-                current_grad *= h_grad
-                self.__activation_functions_parameters_mask[i - 1].grad = (
-                    p_grad * h_grad
-                ).sum()
-        # Compute the gradient of the loss with respect to the weights of the first layer.
+                    self.__activation_functions_parameters_mask[i - 1].item(),
+                ).t()
+                @ current_grad
+            )
+        self.__biases[i].grad = current_grad.sum(dim=0)
+        h_grad = current_grad @ self.__weights[i].t()
+
+        return self._activation_gradient(i, h_grad)
+
+    def _activation_gradient(self, i: int, h_grad: torch.Tensor) -> torch.Tensor:
+        """
+        Computes the gradient of the loss with respect to the outputs of the (i-1)th
+        layer, considering the activation function and its possible parameters.
+
+        This method handles the derivative of the activation function. If the activation
+        function has parameters, the gradient with respect to those parameters will also
+        be computed.
+
+        The gradient computation for the outputs of the previous layer (i.e., before
+        activation) is done by element-wise multiplication of the derivative of the
+        activation function applied to the outputs and the input gradient (`h_grad`).
+
+        For activation functions with parameters:
+        1. Compute the derivative of the activation function with respect to both its
+            outputs and its parameters.
+        2. Update the gradient of the activation function's parameter by summing the
+            product of the computed parameter gradient (`p_grad`) and `h_grad`.
+        3. Update the current gradient to reflect the combined effects of the gradient due
+            to the outputs and the gradient due to the parameters.
+
+        :param i: Index of the current layer. 0-based index, where 0 represents the first
+            hidden layer.
+        :param h_grad: Tensor representing the gradient of the loss with respect to the
+            outputs (before activation) of the current layer.
+            Shape: [batch_size, n_neurons_in_current_layer].
+        :return: Tensor representing the gradient of the loss with respect to the outputs
+            (before activation) of the previous layer.
+            Shape: [batch_size, n_neurons_in_previous_layer].
+        """
+        if self.__activation_functions_parameters_mask[i - 1] is None:
+            return (
+                self.__activation_functions[i - 1](self.__cache[i - 1], gradient=True)
+                * h_grad
+            )
+        else:
+            current_grad, p_grad = self.__activation_functions[i - 1](
+                self.__cache[i - 1],
+                self.__activation_functions_parameters_mask[i - 1],
+                gradient=True,
+            )
+            self.__activation_functions_parameters_mask[i - 1].grad = (
+                p_grad * h_grad
+            ).sum()
+            return current_grad * h_grad
+
+    def _first_layer_gradient(self, features: torch.Tensor, current_grad: torch.Tensor):
+        """
+        Computes the gradient of the loss with respect to the weights and biases of the
+        first layer of the neural network.
+
+        Backpropagation in deep neural networks is typically performed from the output
+        layer backwards to the input layer. The gradient for the first layer is unique in
+        that it depends directly on the input features rather than the outputs of a
+        previous layer.
+        This method handles this special case.
+
+        To compute the weight gradient:
+        1. The method calculates the outer product of the transposed input `features` and
+           the `current_grad`, which represents the gradient of the loss with respect to
+           the outputs (after activation) of the first layer.
+        For the biases gradient:
+        2. Since the bias term is added element-wise to every sample in the batch,
+           the gradient for the bias is the sum of `current_grad` across all samples
+           (i.e., along the batch dimension).
+
+        :param features: Tensor representing the input features to the neural network.
+            Shape: [batch_size, n_features].
+        :param current_grad: Tensor representing the gradient of the loss with respect to
+            the outputs (after activation) of the first layer.
+            Shape: [batch_size, n_neurons_in_first_layer].
+        """
         self.__weights[0].grad = features.t() @ current_grad
-        # Compute the gradient of the loss with respect to the biases of the first layer.
         self.__biases[0].grad = current_grad.sum(dim=0)
 
     def __str__(self):

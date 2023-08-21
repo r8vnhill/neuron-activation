@@ -7,4 +7,4 @@ __all__ = [
     "NeuralNetwork",
 ]
 
-__author__ = ["Roäc Ravenhill"]
+__author__ = ["Ignacio Slater"]

@@ -1,11 +1,24 @@
 from copy import deepcopy
-from typing import Iterator, Callable, Optional
 
 from torch import nn
-from torch.optim import Optimizer
 
 
 class StochasticGradientDescent:
+    """
+    Implements the Stochastic Gradient Descent (SGD) optimization algorithm.
+
+    Stochastic Gradient Descent is a simple yet very efficient approach to
+    discriminative learning of linear classifiers under convex loss functions
+    such as linear SVM and logistic regression. It has received significant
+    attention in machine-learning because of its efficiency and simplicity.
+
+    This class provides methods to update model parameters using the calculated
+    gradients and a fixed learning rate.
+
+    :param parameters: Model parameters to be updated.
+    :param learning_rate: Learning rate for the optimizer.
+    """
+
     def __init__(self, parameters, learning_rate):
         self.__parameters = [p for p in parameters if p is not None]
         self.__learning_rate = learning_rate
