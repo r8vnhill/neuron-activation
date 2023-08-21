@@ -44,7 +44,7 @@ class SizedDataset(Dataset[T], Generic[T], Sized, abc.ABC):
         return self._data
 
     @property
-    def labels(self) -> T:
+    def targets(self) -> T:
         """
         Returns the labels stored in the dataset.
 
