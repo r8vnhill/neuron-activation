@@ -19,13 +19,18 @@ class StochasticGradientDescent:
     :param learning_rate: Learning rate for the optimizer.
     """
 
-    def __init__(self, parameters, learning_rate):
+    __weight_decay_rate: float
+
+    def __init__(self, parameters, learning_rate, weight_decay_rate: float = 0):
         self.__parameters = [p for p in parameters if p is not None]
         self.__learning_rate = learning_rate
+        self.__weight_decay_rate = weight_decay_rate
 
     def step(self):
         for param in self.__parameters:
-            param.data -= param.grad * self.__learning_rate
+            param.data = (
+                1 - self.__weight_decay_rate
+            ) * param.data - self.__learning_rate * param.grad.data
 
     @property
     def learning_rate(self) -> float:
