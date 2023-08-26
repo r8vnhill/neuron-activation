@@ -71,6 +71,7 @@ class FeedForwardNetwork(NeuralNetwork):
     __activation_functions_parameters_mask: list[Optional[nn.Parameter]]
     __activation_function_parameters: list[nn.Parameter]
     __cache: list[torch.Tensor]
+    __keep_prob: nn.ParameterList
 
     def __init__(
         self,
@@ -81,6 +82,14 @@ class FeedForwardNetwork(NeuralNetwork):
         activation_function_parameters: Optional[list[Optional[float]]] = None,
     ):
         super(FeedForwardNetwork, self).__init__()
+        assert len(hidden_layer_sizes) == len(
+            activation_functions
+        ), "Number of hidden layers and activation functions must match."
+        if activation_function_parameters:
+            assert len(activation_function_parameters) == len(activation_functions), (
+                "Number of activation function parameters and activation functions must "
+                "match."
+            )
         layer_sizes = [n_features] + hidden_layer_sizes + [n_classes]
         # Initialize the weights of the neural network using predefined initialization
         # function
