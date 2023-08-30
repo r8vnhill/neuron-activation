@@ -135,13 +135,14 @@ class FeedForwardNetwork(NeuralNetwork):
         output_layer_weights: torch.Tensor,
         hidden_layer_biases: torch.Tensor,
         output_layer_biases: torch.Tensor,
-    ):
+    ) -> 'FeedForwardNetwork':
         self.__weights = nn.ParameterList(
             [nn.Parameter(w) for w in hidden_layer_weights + [output_layer_weights]]
         )
         self.__biases = nn.ParameterList(
             [nn.Parameter(b) for b in hidden_layer_biases + [output_layer_biases]]
         )
+        return self
 
     def forward(self, features: torch.Tensor) -> torch.Tensor:
         """
